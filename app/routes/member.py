@@ -85,5 +85,5 @@ async def error(req: Request):
 
 
 @member_router.get('/loginfail', response_class=HTMLResponse)
-async def error(req: Request):
+async def loginfail(req: Request):
     return templates.TemplateResponse('member/loginfail.html', {'request': req})
