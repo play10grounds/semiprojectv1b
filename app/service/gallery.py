@@ -5,6 +5,7 @@ from turtledemo.sorting_animate import partition
 from fastapi import Form
 from sqlalchemy import insert, select, distinct, func
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from app.model.gallery import Gallery, GalAttach
 from app.schema.gallery import NewGallery
@@ -85,10 +86,9 @@ class GalleryService:
     @staticmethod
     def selectone_gallery(gno, db):
         try:
-            stmt = select(Gallery, GalAttach)\
-                    .join_from(Gallery, GalAttach)\
+            stmt = select(Gallery).options(joinedload(Gallery.attachs))\
                     .where(Gallery.gno == gno)
-            result = db.execute(stmt).fetchall()
+            result = db.execute(stmt).scalars().first()
 
             return result
 
