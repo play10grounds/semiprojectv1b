@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select, or_, update, insert, func, delete
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload, contains_eager
@@ -63,6 +65,8 @@ class BoardService:
             db.execute(stmt)
 
             # 본문글 + 댓글 읽어오기
+            # stmt = select(Board).options(joinedload(Board.replys))\
+            #     .where(Board.bno == bno)#.order_by(Reply.rpno)
             # outerjoin : outer join
             # contains_eager : 관계 맺은 하위 객체의 내용 즉시 로딩
             stmt = select(Board).outerjoin(Board.replys)\
@@ -125,4 +129,21 @@ class BoardService:
 
         except SQLAlchemyError as ex:
             print(f'▶▶▶ delete_board 오류발생 : {str(ex)}')
+            db.rollback()
+
+
+    @staticmethod
+    def update_board(db, board):
+        try:
+            stmt = update(Board).values(title=board.title,
+                userid=board.userid, contents=board.contents,
+                regdate=datetime.now())\
+                .where(Board.bno == board.bno)
+            result = db.execute(stmt)
+
+            db.commit()
+            return result
+
+        except SQLAlchemyError as ex:
+            print(f'▶▶▶ update_board 오류발생 : {str(ex)}')
             db.rollback()
