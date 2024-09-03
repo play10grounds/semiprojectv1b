@@ -1,8 +1,6 @@
 from typing import Optional
 
 from pydantic import BaseModel, Field
-from pygments.lexer import default
-
 
 class NewBoard(BaseModel):
     title: str
