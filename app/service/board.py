@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import select, or_, update, insert, func, delete
+from sqlalchemy import select, or_, update, insert, func, delete, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload, contains_eager
 
@@ -93,10 +93,15 @@ class BoardService:
     @staticmethod
     def insert_reply(db, rp):
         try:
-            # 댓글 추가시 생성될 댓글번호 예측
+            # 댓글 추가시 생성될 댓글번호 예측 1
             # select coalesce(max(rno), 0) + 1 from reply
             stmt = select(func.coalesce(func.max(Reply.rno), 0) + 1)
             next_rno = db.execute(stmt).scalar_one()
+
+            # 댓글 추가시 생성될 댓글번호 예측 2
+            # SELECT seq FROM sqlite_sequence WHERE name = 'your_table';
+            # stmt = 'SELECT coalesce(max(seq), 0) + 1 seq FROM sqlite_sequence WHERE name = "reply"'
+            # next_rno = db.execute(text(stmt)).scalar_one()
 
             stmt = insert(Reply).values(userid=rp.userid,
                     reply=rp.reply, bno=rp.bno, rpno=next_rno)
