@@ -103,6 +103,11 @@ class BoardService:
             # stmt = 'SELECT coalesce(max(seq), 0) + 1 seq FROM sqlite_sequence WHERE name = "reply"'
             # next_rno = db.execute(text(stmt)).scalar_one()
 
+            # 댓글 추가시 생성될 댓글번호 예측 3
+            # SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES
+            # WHERE TABLE_SCHEMA = 'your_database_name'
+            # AND TABLE_NAME = 'your_table_name';
+
             stmt = insert(Reply).values(userid=rp.userid,
                     reply=rp.reply, bno=rp.bno, rpno=next_rno)
             result = db.execute(stmt)
